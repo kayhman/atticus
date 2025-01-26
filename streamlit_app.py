@@ -65,6 +65,7 @@ elif not st.session_state.indexed:
         index = VectorStoreIndex.from_documents(
             documents,
         )
+        st.session_state.indexed = True
 
 # Create a session state variable to store the chat messages. This ensures that the
 # messages persist across reruns.
