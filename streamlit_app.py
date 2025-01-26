@@ -1,24 +1,45 @@
+import os
+
 import streamlit as st
-from openai import OpenAI
+from llama_index.core import Settings, VectorStoreIndex, SimpleDirectoryReader
+from llama_index.embeddings.huggingface import HuggingFaceEmbedding
+from llama_index.llms.replicate import Replicate
+from transformers import AutoTokenizer
+
 
 # Show title and description.
 st.title("💬 Chatbot")
 st.write(
-    "This is a simple chatbot that uses OpenAI's GPT-3.5 model to generate responses. "
-    "To use this app, you need to provide an OpenAI API key, which you can get [here](https://platform.openai.com/account/api-keys). "
-    "You can also learn how to build this app step by step by [following our tutorial](https://docs.streamlit.io/develop/tutorials/llms/build-conversational-apps)."
+    "Explore documents exploration"
 )
 
-# Ask user for their OpenAI API key via `st.text_input`.
-# Alternatively, you can store the API key in `./.streamlit/secrets.toml` and access it
-# via `st.secrets`, see https://docs.streamlit.io/develop/concepts/connections/secrets-management
-openai_api_key = st.text_input("OpenAI API Key", type="password")
+REPLICATE_API_TOKEN = st.text_input("Secret Key", type="password")
 if not openai_api_key:
     st.info("Please add your OpenAI API key to continue.", icon="🗝️")
 else:
+    osREPLICATE_API_TOKEN.environ["REPLICATE_API_TOKEN"] = REPLICATE_API_TOKEN
+    # set the LLM
+    llama2_7b_chat = "meta/llama-2-7b-chat:8e6975e5ed6174911a6ff3d60540dfd4844201974602551e10e9e87ab143d81e"
+    Settings.llm = Replicate(
+        model=llama2_7b_chat,
+        temperature=0.01,
+        additional_kwargs={"top_p": 1, "max_new_tokens": 300},
+    )
 
-    # Create an OpenAI client.
-    client = OpenAI(api_key=openai_api_key)
+    # set tokenizer to match LLM
+    Settings.tokenizer = AutoTokenizer.from_pretrained(
+        "NousResearch/Llama-2-7b-chat-hf"
+    )
+
+    # set the embed model!pip install llama-index
+    Settings.embed_model = HuggingFaceEmbedding(
+        model_name="BAAI/bge-small-en-v1.5"
+    )
+
+    documents = SimpleDirectoryReader("/content").load_data()
+    index = VectorStoreIndex.from_documents(
+        documents,
+    )
 
     # Create a session state variable to store the chat messages. This ensures that the
     # messages persist across reruns.
@@ -39,18 +60,10 @@ else:
         with st.chat_message("user"):
             st.markdown(prompt)
 
-        # Generate a response using the OpenAI API.
-        stream = client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": m["role"], "content": m["content"]}
-                for m in st.session_state.messages
-            ],
-            stream=True,
-        )
+        query_engine = index.as_query_engine()
+        res = query_engine.query(st.session_state.messages[-1]["content"])
 
-        # Stream the response to the chat using `st.write_stream`, then store it in 
-        # session state.
+
         with st.chat_message("assistant"):
-            response = st.write_stream(stream)
+            response = st.write(res)
         st.session_state.messages.append({"role": "assistant", "content": response})
