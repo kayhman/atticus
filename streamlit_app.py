@@ -21,6 +21,9 @@ try:
 except OSError as error:
     pass
 
+if "indexed" not in st.session_state:
+    st.session_state.indexed = False
+
 filelist=[]
 for root, dirs, files in os.walk("./content"):
       for file in files:
@@ -37,7 +40,7 @@ if uploaded_file is not None:
 
 if not REPLICATE_API_TOKEN:
     st.info("Please add your OpenAI API key to continue.", icon="🗝️")
-else:
+elif not st.session_state.indexed:
     with st.spinner('Indexing documents'):
         os.environ["REPLICATE_API_TOKEN"] = REPLICATE_API_TOKEN
         # set the LLM
