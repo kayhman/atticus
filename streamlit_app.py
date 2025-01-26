@@ -21,6 +21,13 @@ try:
 except OSError as error:
     pass
 
+filelist=[]
+for root, dirs, files in os.walk("./content"):
+      for file in files:
+             filename=os.path.join(root, file)
+             filelist.append(filename)
+st.write(filelist)
+
 uploaded_file = st.file_uploader("Choose a file")
 if uploaded_file is not None:
     with open("./content/" + uploaded_file.name, mode='wb') as f:
