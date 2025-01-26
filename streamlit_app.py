@@ -79,5 +79,5 @@ else:
 
 
         with st.chat_message("assistant"):
-            response = st.write(res)
+            response = st.write(res.response)
         st.session_state.messages.append({"role": "assistant", "content": response})
