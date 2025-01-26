@@ -1,4 +1,5 @@
 import os
+from io import StringIO
 
 import streamlit as st
 from llama_index.core import Settings, VectorStoreIndex, SimpleDirectoryReader
@@ -14,6 +15,22 @@ st.write(
 )
 
 REPLICATE_API_TOKEN = st.text_input("Secret Key", type="password")
+
+try:
+    os.mkdir('./content')
+except OSError as error:
+    passwith open('file.xml', mode='w') as f:
+    print(buf.getvalue(), file=f)
+
+uploaded_file = st.file_uploader("Choose a file")
+if uploaded_file is not None:
+    # To convert to a string based IO:
+    buf = StringIO(uploaded_file.getvalue().decode("utf-8"))
+    st.write(stringio)
+
+    with open(uploaded_file.name, mode='w') as f:
+        print(buf.getvalue(), file=f)
+
 
 if not REPLICATE_API_TOKEN:
     st.info("Please add your OpenAI API key to continue.", icon="🗝️")
@@ -37,7 +54,7 @@ else:
         model_name="BAAI/bge-small-en-v1.5"
     )
 
-    documents = SimpleDirectoryReader("/content").load_data()
+    documents = SimpleDirectoryReader("./content").load_data()
     index = VectorStoreIndex.from_documents(
         documents,
     )
