@@ -19,14 +19,12 @@ REPLICATE_API_TOKEN = st.text_input("Secret Key", type="password")
 try:
     os.mkdir('./content')
 except OSError as error:
-    passwith open('file.xml', mode='w') as f:
-    print(buf.getvalue(), file=f)
+    pass
 
 uploaded_file = st.file_uploader("Choose a file")
 if uploaded_file is not None:
     # To convert to a string based IO:
     buf = StringIO(uploaded_file.getvalue().decode("utf-8"))
-    st.write(stringio)
 
     with open(uploaded_file.name, mode='w') as f:
         print(buf.getvalue(), file=f)
