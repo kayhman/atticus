@@ -14,10 +14,11 @@ st.write(
 )
 
 REPLICATE_API_TOKEN = st.text_input("Secret Key", type="password")
-if not openai_api_key:
+
+if not REPLICATE_API_TOKEN:
     st.info("Please add your OpenAI API key to continue.", icon="🗝️")
 else:
-    osREPLICATE_API_TOKEN.environ["REPLICATE_API_TOKEN"] = REPLICATE_API_TOKEN
+    os.environ["REPLICATE_API_TOKEN"] = REPLICATE_API_TOKEN
     # set the LLM
     llama2_7b_chat = "meta/llama-2-7b-chat:8e6975e5ed6174911a6ff3d60540dfd4844201974602551e10e9e87ab143d81e"
     Settings.llm = Replicate(
