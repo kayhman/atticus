@@ -1,4 +1,5 @@
 import os
+from io import BytesIO
 
 import streamlit as st
 from llama_index.core import Settings, VectorStoreIndex, SimpleDirectoryReader
@@ -23,8 +24,9 @@ except OSError as error:
 uploaded_file = st.file_uploader("Choose a file")
 if uploaded_file is not None:
     with open(uploaded_file.name, mode='w') as f:
-        uploaded_file.write(f)
-
+        buf = BytesIO()
+        uploaded_file.write(buf)
+        f.write(buf)
 
 if not REPLICATE_API_TOKEN:
     st.info("Please add your OpenAI API key to continue.", icon="🗝️")
