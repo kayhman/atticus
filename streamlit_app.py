@@ -23,7 +23,7 @@ except OSError as error:
 
 uploaded_file = st.file_uploader("Choose a file")
 if uploaded_file is not None:
-    with open(uploaded_file.name, mode='wb') as f:
+    with open("./content/" + uploaded_file.name, mode='wb') as f:
         buf = BytesIO(uploaded_file.getvalue())
         f.write(buf.getvalue())
 
