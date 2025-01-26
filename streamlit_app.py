@@ -1,5 +1,4 @@
 import os
-from io import StringIO
 
 import streamlit as st
 from llama_index.core import Settings, VectorStoreIndex, SimpleDirectoryReader
@@ -23,11 +22,8 @@ except OSError as error:
 
 uploaded_file = st.file_uploader("Choose a file")
 if uploaded_file is not None:
-    # To convert to a string based IO:
-    buf = StringIO(uploaded_file.getvalue().decode("utf-8"))
-
     with open(uploaded_file.name, mode='w') as f:
-        print(buf.getvalue(), file=f)
+        uploaded_file.write(f)
 
 
 if not REPLICATE_API_TOKEN:
