@@ -25,7 +25,7 @@ uploaded_file = st.file_uploader("Choose a file")
 if uploaded_file is not None:
     with open(uploaded_file.name, mode='wb') as f:
         buf = BytesIO(uploaded_file.getvalue())
-        f.write(buf)
+        f.write(buf.getvalue())
 
 if not REPLICATE_API_TOKEN:
     st.info("Please add your OpenAI API key to continue.", icon="🗝️")
